@@ -142,34 +142,39 @@ class Hsluv {
     /**
     * XYZ coordinates are ranging in [0;1] and RGB coordinates in [0;1] range.
     * @param tuple An array containing the color's X,Y and Z values.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's red, green and blue.
     **/
-    public static function xyzToRgb(tuple:Array<Float>):Array<Float> {
-        return [
-            fromLinear(dotProduct(m[0], tuple)),
-            fromLinear(dotProduct(m[1], tuple)),
-            fromLinear(dotProduct(m[2], tuple))
-        ];
+    public static function xyzToRgb(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+        result[0] = fromLinear(dotProduct(m[0], tuple));
+        result[1] = fromLinear(dotProduct(m[1], tuple));
+        result[2] = fromLinear(dotProduct(m[2], tuple));
+        return result;
     }
 
     /**
     * RGB coordinates are ranging in [0;1] and XYZ coordinates in [0;1].
     * @param tuple An array containing the color's R,G,B values.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's XYZ coordinates.
     **/
-    public static function rgbToXyz(tuple:Array<Float>):Array<Float> {
-        var rgbl:Array<Float> =
-        [
-            toLinear(tuple[0]),
-            toLinear(tuple[1]),
-            toLinear(tuple[2])
-        ];
-
-        return [
-            dotProduct(minv[0], rgbl),
-            dotProduct(minv[1], rgbl),
-            dotProduct(minv[2], rgbl)
-        ];
+    public static function rgbToXyz(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+        result[0] = toLinear(tuple[0]);
+        result[1] = toLinear(tuple[1]);
+        result[2] = toLinear(tuple[2]);
+        var dp0 = dotProduct(minv[0], result);
+        var dp1 = dotProduct(minv[1], result);
+        var dp2 = dotProduct(minv[2], result);
+        result[0] = toLinear(dp0);
+        result[1] = toLinear(dp1);
+        result[2] = toLinear(dp2);
+        return result;
     }
 
     /*
@@ -197,9 +202,14 @@ class Hsluv {
     /**
     * XYZ coordinates are ranging in [0;1].
     * @param tuple An array containing the color's X,Y,Z values.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's LUV coordinates.
     **/
-    public static function xyzToLuv(tuple:Array<Float>):Array<Float> {
+    public static function xyzToLuv(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+
         var X:Float = tuple[0];
         var Y:Float = tuple[1];
         var Z:Float = tuple[2];
@@ -220,27 +230,41 @@ class Hsluv {
         var L:Float = yToL(Y);
 
         if (L == 0) {
-            return [0, 0, 0];
+            result[0] = 0;
+            result[1] = 0;
+            result[2] = 0;
+            return result;
         }
 
         var U:Float = 13 * L * (varU - refU);
         var V:Float = 13 * L * (varV - refV);
 
-        return [L, U, V];
+        result[0] = L;
+        result[1] = U;
+        result[2] = V;
+        return result;
     }
 
     /**
     * XYZ coordinates are ranging in [0;1].
     * @param tuple An array containing the color's L,U,V values.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's XYZ coordinates.
     **/
-    public static function luvToXyz(tuple:Array<Float>):Array<Float> {
+    public static function luvToXyz(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+
         var L:Float = tuple[0];
         var U:Float = tuple[1];
         var V:Float = tuple[2];
 
         if (L == 0) {
-            return [0, 0, 0];
+            result[0] = 0;
+            result[1] = 1;
+            result[2] = 2;
+            return result;
         }
 
         var varU:Float = U / (13 * L) + refU;
@@ -250,14 +274,22 @@ class Hsluv {
         var X:Float = 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV);
         var Z:Float = (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV);
 
-        return [X, Y, Z];
+        result[0] = X;
+        result[1] = Y;
+        result[2] = Z;
+        return result;
     }
 
     /**
     * @param tuple An array containing the color's L,U,V values.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's LCH coordinates.
     **/
-    public static function luvToLch(tuple:Array<Float>):Array<Float> {
+    public static function luvToLch(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+
         var L:Float = tuple[0];
         var U:Float = tuple[1];
         var V:Float = tuple[2];
@@ -277,14 +309,22 @@ class Hsluv {
             }
         }
 
-        return [L, C, H];
+        result[0] = L;
+        result[1] = C;
+        result[2] = H;
+        return result;
     }
 
     /**
     * @param tuple An array containing the color's L,C,H values.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's LUV coordinates.
     **/
-    public static function lchToLuv(tuple:Array<Float>):Array<Float> {
+    public static function lchToLuv(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+
         var L:Float = tuple[0];
         var C:Float = tuple[1];
         var H:Float = tuple[2];
@@ -293,57 +333,88 @@ class Hsluv {
         var U:Float = Math.cos(Hrad) * C;
         var V:Float = Math.sin(Hrad) * C;
 
-        return [L, U, V];
+        result[0] = L;
+        result[1] = U;
+        result[2] = V;
+        return result;
     }
 
     /**
     * HSLuv values are ranging in [0;360], [0;100] and [0;100].
     * @param tuple An array containing the color's H,S,L values in HSLuv color space.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's LCH coordinates.
     **/
-    public static function hsluvToLch(tuple:Array<Float>):Array<Float> {
+    public static function hsluvToLch(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+
         var H:Float = tuple[0];
         var S:Float = tuple[1];
         var L:Float = tuple[2];
 
         // White and black: disambiguate chroma
         if (L > 99.9999999) {
-            return [100, 0, H];
+            result[0] = 100;
+            result[1] = 0;
+            result[2] = H;
+            return result;
         }
 
         if (L < 0.00000001) {
-            return [0, 0, H];
+            result[0] = 0;
+            result[1] = 0;
+            result[2] = H;
+            return result;
         }
 
         var max:Float = maxChromaForLH(L, H);
         var C:Float = max / 100 * S;
 
-        return [L, C, H];
+        result[0] = L;
+        result[1] = C;
+        result[2] = H;
+        return result;
     }
 
     /**
     * HSLuv values are ranging in [0;360], [0;100] and [0;100].
     * @param tuple An array containing the color's LCH values.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's HSL coordinates in HSLuv color space.
     **/
-    public static function lchToHsluv(tuple:Array<Float>):Array<Float> {
+    public static function lchToHsluv(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+
         var L:Float = tuple[0];
         var C:Float = tuple[1];
         var H:Float = tuple[2];
 
         // White and black: disambiguate chroma
         if (L > 99.9999999) {
-            return [H, 0, 100];
+            result[0] = H;
+            result[1] = 0;
+            result[2] = 100;
+            return result;
         }
 
         if (L < 0.00000001) {
-            return [H, 0, 0];
+            result[0] = H;
+            result[1] = 0;
+            result[2] = 0;
+            return result;
         }
 
         var max:Float = maxChromaForLH(L, H);
         var S:Float = C / max * 100;
 
-        return [H, S, L];
+        result[0] = H;
+        result[1] = S;
+        result[2] = L;
+        return result;
     }
 
     /**
@@ -434,19 +505,33 @@ class Hsluv {
     /**
     * RGB values are ranging in [0;1].
     * @param tuple An array containing the color's LCH values.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's RGB coordinates.
     **/
-    public static function lchToRgb(tuple:Array<Float>):Array<Float> {
-        return xyzToRgb(luvToXyz(lchToLuv(tuple)));
+    public static function lchToRgb(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+        lchToLuv(tuple, result);
+        luvToXyz(result, result);
+        xyzToRgb(result, result);
+        return result;
     }
 
     /**
     * RGB values are ranging in [0;1].
     * @param tuple An array containing the color's RGB values.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's LCH coordinates.
     **/
-    public static function rgbToLch(tuple:Array<Float>):Array<Float> {
-        return luvToLch(xyzToLuv(rgbToXyz(tuple)));
+    public static function rgbToLch(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+        rgbToXyz(tuple, result);
+        xyzToLuv(result, result);
+        luvToLch(result, result);
+        return result;
     }
 
     // RGB <--> HPLuv
@@ -454,21 +539,32 @@ class Hsluv {
     /**
     * HSLuv values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
     * @param tuple An array containing the color's HSL values in HSLuv color space.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's RGB coordinates.
     **/
     @:keep
-    public static function hsluvToRgb(tuple:Array<Float>):Array<Float> {
-        return lchToRgb(hsluvToLch(tuple));
+    public static function hsluvToRgb(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+        hsluvToLch(tuple, result);
+        return lchToRgb(result, result);
     }
 
     /**
     * HSLuv values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
     * @param tuple An array containing the color's RGB coordinates.
+    * @param result A pre-allocated array to store the result into.
     * @return An array containing the resulting color's HSL coordinates in HSLuv color space.
     **/
     @:keep
-    public static function rgbToHsluv(tuple:Array<Float>):Array<Float> {
-        return lchToHsluv(rgbToLch(tuple));
+    public static function rgbToHsluv(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        if (result == null) {
+            result = [0, 0, 0];
+        }
+        rgbToLch(tuple, result);
+        lchToHsluv(result, result);
+        return result;
     }
 
     /**
