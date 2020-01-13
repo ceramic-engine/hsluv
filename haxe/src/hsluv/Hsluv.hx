@@ -149,9 +149,12 @@ class Hsluv {
         if (result == null) {
             result = [0, 0, 0];
         }
-        result[0] = fromLinear(dotProduct(m[0], tuple));
-        result[1] = fromLinear(dotProduct(m[1], tuple));
-        result[2] = fromLinear(dotProduct(m[2], tuple));
+        var dp0 = fromLinear(dotProduct(m[0], tuple));
+        var dp1 = fromLinear(dotProduct(m[1], tuple));
+        var dp2 = fromLinear(dotProduct(m[2], tuple));
+        result[0] = dp0;
+        result[1] = dp1;
+        result[2] = dp2;
         return result;
     }
 
@@ -548,7 +551,8 @@ class Hsluv {
             result = [0, 0, 0];
         }
         hsluvToLch(tuple, result);
-        return lchToRgb(result, result);
+        lchToRgb(result, result);
+        return result;
     }
 
     /**
