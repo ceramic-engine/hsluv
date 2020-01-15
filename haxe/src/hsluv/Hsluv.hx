@@ -146,12 +146,12 @@ class Hsluv {
     * @return An array containing the resulting color's red, green and blue.
     **/
     public static function xyzToRgb(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
-        if (result == null) {
-            result = [0, 0, 0];
-        }
         var dp0 = fromLinear(dotProduct(m[0], tuple));
         var dp1 = fromLinear(dotProduct(m[1], tuple));
         var dp2 = fromLinear(dotProduct(m[2], tuple));
+        if (result == null) {
+            result = [0, 0, 0];
+        }
         result[0] = dp0;
         result[1] = dp1;
         result[2] = dp2;
@@ -165,18 +165,21 @@ class Hsluv {
     * @return An array containing the resulting color's XYZ coordinates.
     **/
     public static function rgbToXyz(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
+        var t0 = tuple[0];
+        var t1 = tuple[1];
+        var t2 = tuple[2];
         if (result == null) {
             result = [0, 0, 0];
         }
-        result[0] = toLinear(tuple[0]);
-        result[1] = toLinear(tuple[1]);
-        result[2] = toLinear(tuple[2]);
+        result[0] = toLinear(t0);
+        result[1] = toLinear(t1);
+        result[2] = toLinear(t2);
         var dp0 = dotProduct(minv[0], result);
         var dp1 = dotProduct(minv[1], result);
         var dp2 = dotProduct(minv[2], result);
-        result[0] = toLinear(dp0);
-        result[1] = toLinear(dp1);
-        result[2] = toLinear(dp2);
+        result[0] = dp0;
+        result[1] = dp1;
+        result[2] = dp2;
         return result;
     }
 
@@ -209,13 +212,13 @@ class Hsluv {
     * @return An array containing the resulting color's LUV coordinates.
     **/
     public static function xyzToLuv(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
-        if (result == null) {
-            result = [0, 0, 0];
-        }
-
         var X:Float = tuple[0];
         var Y:Float = tuple[1];
         var Z:Float = tuple[2];
+
+        if (result == null) {
+            result = [0, 0, 0];
+        }
 
         // This divider fix avoids a crash on Python (divide by zero except.)
         var divider:Float = (X + (15 * Y) + (3 * Z));
@@ -289,13 +292,13 @@ class Hsluv {
     * @return An array containing the resulting color's LCH coordinates.
     **/
     public static function luvToLch(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
-        if (result == null) {
-            result = [0, 0, 0];
-        }
-
         var L:Float = tuple[0];
         var U:Float = tuple[1];
         var V:Float = tuple[2];
+
+        if (result == null) {
+            result = [0, 0, 0];
+        }
 
         var C:Float = Math.sqrt(U * U + V * V);
         var H:Float;
@@ -324,13 +327,13 @@ class Hsluv {
     * @return An array containing the resulting color's LUV coordinates.
     **/
     public static function lchToLuv(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
-        if (result == null) {
-            result = [0, 0, 0];
-        }
-
         var L:Float = tuple[0];
         var C:Float = tuple[1];
         var H:Float = tuple[2];
+
+        if (result == null) {
+            result = [0, 0, 0];
+        }
 
         var Hrad:Float = H / 360.0 * 2 * Math.PI;
         var U:Float = Math.cos(Hrad) * C;
@@ -349,13 +352,13 @@ class Hsluv {
     * @return An array containing the resulting color's LCH coordinates.
     **/
     public static function hsluvToLch(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
-        if (result == null) {
-            result = [0, 0, 0];
-        }
-
         var H:Float = tuple[0];
         var S:Float = tuple[1];
         var L:Float = tuple[2];
+
+        if (result == null) {
+            result = [0, 0, 0];
+        }
 
         // White and black: disambiguate chroma
         if (L > 99.9999999) {
@@ -388,13 +391,13 @@ class Hsluv {
     * @return An array containing the resulting color's HSL coordinates in HSLuv color space.
     **/
     public static function lchToHsluv(tuple:Array<Float>, ?result:Array<Float>):Array<Float> {
-        if (result == null) {
-            result = [0, 0, 0];
-        }
-
         var L:Float = tuple[0];
         var C:Float = tuple[1];
         var H:Float = tuple[2];
+
+        if (result == null) {
+            result = [0, 0, 0];
+        }
 
         // White and black: disambiguate chroma
         if (L > 99.9999999) {
