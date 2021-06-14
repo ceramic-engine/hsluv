@@ -1,0 +1,13 @@
+{
+    "name": "hsluv",
+    "url": "https://github.com/ceramic-engine/hsluv",
+    "license": "MIT",
+    "tags": [
+    ],
+    "description": "",
+    "version": "1.0.0",
+    "classPath": "haxe/src",
+    "releasenote": "Initial release, everything is working correctly.",
+    "contributors": ["Various"],
+    "dependencies": {}
+}
